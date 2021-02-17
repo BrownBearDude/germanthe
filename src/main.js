@@ -6,6 +6,7 @@ import Col from 'react-bootstrap/Col'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { useForm } from "react-hook-form";
+import { useCountUp } from 'react-countup';
 const randomInt = require('random-int');
 
 
@@ -14,10 +15,6 @@ const randomInt = require('random-int');
 
 
 function Main() {
-
-    
-
-
     let answers = [
         {name:"der", prompt:"Nominative Masculine"},
         {name:"die", prompt:"Nominative Feminine"},
@@ -41,40 +38,46 @@ function Main() {
 
     const [f, setf] = useState([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15]);
     const [random, setrandom] = useState(randomInt(15));
-    
+    const [show, setshow] = useState(false)
+    // const { countUp, start } = useCountUp({ 
+    //     end: 1234567,
+    //     delay: 999999,
+    //     duration: 5 
+    // });
+    // start(10)
+
     const { register, handleSubmit, reset} = useForm();
     const onSubmit = data => {
+        reset()
         if (data.only == answers[random].name) { 
             let g = f
             g.splice(f.indexOf(random), 1)
             setf([...g])
             console.log(random)
-        }  
-        if (f.length > 0) {
-            let randomnew = randomInt(f.length-1)
-            setrandom( f[randomnew])
-            reset()
+            if (f.length > 0) {
+                let randomnew = randomInt(f.length-1)
+                setrandom( f[randomnew])
+               
+            }
+        } else {
+            setshow(true)
         }
     };
 
-
-    function handleClick() {
-        let randomnew = randomInt(f.length-1)
-        setrandom( f[randomnew])
-        let g = f
-        g.splice(randomnew, 1)
-        setf([...g])
+    function showanswer(){
+        setshow(false)
+        if (f.length > 0) {
+            let randomnew = randomInt(f.length-1)
+            setrandom( f[randomnew])
+        }
+        reset()
     }
 
-    
-        
+
 
     return(
         <Container className="bg-light text-center">
-            {f}
-            
             <h2>
-            <Button onClick={handleClick}>f</Button>
             <table>
                 <tr>
                     <th scope="col" className="p-4 border bg-dark"></th>
@@ -112,14 +115,17 @@ function Main() {
                     <th scope="col" className={random == 15 ? "p-4 border bg-danger" : "p-4 border"}>{!f.includes(15) && <p>der</p>}</th>
                 </tr>
             </table>
-            <br/>
-            {answers[random].prompt}
             </h2>
-            <Form onSubmit={handleSubmit(onSubmit)}>
-                <Form.Control name="only" type="text" ref={register({required: true})} />
-                <Button size="lg" variant="outline-success" type="submit">Submit</Button>
+            
+            
+            <br/>
+            {show && <h1 className="text-danger">{answers[random].name}</h1>}
+            <h1>{answers[random].prompt}</h1>
+            <br/>
+            <Form className="form-inline text-center" onSubmit={handleSubmit(onSubmit)}>
+                <Form.Control className="col-7" name="only" type="text" ref={register} />
+                <Button size="lg" onClick={show && showanswer} variant="outline-success" type={!show ? "button" : "submit"}>{!show ? "submit" : "next"}</Button>
             </Form>
-
         </Container>
     );
 }
