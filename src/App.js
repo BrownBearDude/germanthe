@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import Main from './main';
+import Home from './home'
 import {
   BrowserRouter as Router,
   Switch,
@@ -13,8 +14,11 @@ function App() {
   return (
     <Router>
       <Switch>
-        <Route path="/">
+        <Route path="/main">
           <Main />
+        </Route>
+        <Route path="/">
+          <Home />
         </Route>
       </Switch>
     </Router>
